@@ -108,6 +108,7 @@ object SongLoader {
         } catch (e: Throwable) {
             e.printStackTrace()
         }
+        results.sortBy{it.artist + " - " + it.title}
         return results
     }
 

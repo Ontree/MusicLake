@@ -10,6 +10,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -82,8 +83,10 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
     private var yInView: Float = 0.toFloat()
     private val mFontSize: Float
     private val mFontColor: Int
+    private val mFontColorBarPos: Int
     private var mMovement: Boolean = false
     private var isHiddenSettings: Boolean = false
+    private var showLyricBg: Boolean = true
 
     var mLyricText: LyricTextView
     var mTitle: TextView
@@ -103,6 +106,7 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
     private val mRootView: View?
     private var mIsLock: Boolean = false
     private val mNotify: UnLockNotify
+    private var mShowLyricBg: CheckBox
 
 
     init {
@@ -131,6 +135,7 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
         mRelLyricView = findViewById(R.id.rl_layout)
         mLinLyricView = findViewById(R.id.ll_layout)
         mFrameBackground = findViewById(R.id.small_bg)
+        mShowLyricBg = findViewById(R.id.show_lyric_bg)
 
         mCloseButton.setOnClickListener(this)
         mMusicButton.setOnClickListener(this)
@@ -141,17 +146,25 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
         mSettingsButton.setOnClickListener(this)
 
         mFontSize = SPUtils.getFontSize().toFloat()
+        LogUtil.e("fontsize "+SPUtils.getFontSize())
         mIsLock = SPUtils.getAnyByKey(SPUtils.SP_KEY_FLOAT_LYRIC_LOCK, false)
         mLyricText.setFontSizeScale(mFontSize)
         mSizeSeekBar.progress = mFontSize.toInt()
 
-        if (mIsLock) {
-            toggleLyricView()
-        }
+//        if (mIsLock) {
+//            toggleLyricView()
+//        }
+        toggleLyricView()
 
-        mFontColor = SPUtils.getFontColor()
+        mFontColor = SPUtils.getFloatFontColor()
+        mFontColorBarPos = SPUtils.getFloatFontColorBarPos()
+
         mLyricText.setFontColorScale(mFontColor)
-        mColorSeekBar.colorBarPosition = mFontColor
+        mColorSeekBar.setColorBarPosition(mFontColorBarPos)
+
+        showLyricBg = SPUtils.isShowFloatLyricBg()
+        mShowLyricBg.setChecked(showLyricBg)
+        updateLyricBg()
 
         setPlayStatus(MusicPlayerService.getInstance().isPlaying)
 
@@ -172,9 +185,23 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
         })
         mColorSeekBar.setOnColorChangeListener { colorBarPosition, alphaBarPosition, color ->
             mLyricText.setFontColorScale(color)
-            SPUtils.saveFontColor(color)
+            SPUtils.saveFloatFontColor(color)
+            SPUtils.saveFloatFontColorBarPos(colorBarPosition)
+        }
+        mShowLyricBg.setOnCheckedChangeListener { buttonView, isChecked ->
+            showLyricBg = isChecked
+            SPUtils.saveShowFloatLyricBg(showLyricBg)
+            updateLyricBg()
         }
 
+    }
+
+    fun updateLyricBg() {
+        if (showLyricBg && mLinLyricView.visibility != View.VISIBLE) {
+            mRelLyricView.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_float_lyric))
+        } else {
+            mRelLyricView.setBackgroundResource(0)
+        }
     }
 
 
@@ -247,6 +274,7 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
                 mFrameBackground.visibility = View.GONE
                 mTitle.visibility = View.GONE
             }
+            updateLyricBg()
         }
     }
 

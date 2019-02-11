@@ -105,7 +105,7 @@ object PlayQueueManager {
     }
 
     /**
-     * 获取下一首位置
+     * 获取上一首位置
      *
      * @return isAuto 是否自动下一曲
      */

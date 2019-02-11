@@ -233,8 +233,8 @@ class PlayerActivity : BaseActivity<PlayPresenter>(), PlayContract.View {
     override fun showLyric(lyric: String?, init: Boolean) {
         if (init) {
             //初始化歌词配置
-            mLyricView?.setTextSize(SPUtils.getFontSize())
-            mLyricView?.setHighLightTextColor(SPUtils.getFontColor())
+            mLyricView?.setTextSize(SPUtils.getLyricSize())
+            mLyricView?.setHighLightTextColor(SPUtils.getLyricColor())
             mLyricView?.setTouchable(true)
             mLyricView?.setOnPlayerClickListener { progress, _ ->
                 PlayManager.seekTo(progress.toInt())

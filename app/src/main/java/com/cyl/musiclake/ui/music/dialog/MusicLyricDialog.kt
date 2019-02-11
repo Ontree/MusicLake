@@ -89,6 +89,8 @@ class MusicLyricDialog : DialogFragment() {
             dismiss()
         }
         lyricFormatView.setOnClickListener {
+            formatColorSb.setColorBarPosition(SPUtils.getLyricColorBarPos())
+            formatSizeSb.progress = SPUtils.getLyricSize()
             controlsView.visibility = View.GONE
             formatView.visibility = View.VISIBLE
         }
@@ -96,10 +98,11 @@ class MusicLyricDialog : DialogFragment() {
             loadingView.visibility = View.VISIBLE
             searchLyric(title.toString(), duration)
         }
-        formatColorSb.setOnColorChangeListener { _, _, color ->
+        formatColorSb.setOnColorChangeListener { colorBarPosition, alphaBarPosition, color ->
             formatColorTv.setTextColor(color)
             textColorListener?.invoke(color)
-            SPUtils.saveFontColor(color)
+            SPUtils.saveLyricColorBarPos(colorBarPosition)
+            SPUtils.saveLyricColor(color)
         }
         formatSizeSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -111,7 +114,7 @@ class MusicLyricDialog : DialogFragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 textSizeListener?.invoke(progress)
                 //初始化歌词配置
-                SPUtils.saveFontSize(progress)
+                SPUtils.saveLyricSize(progress)
             }
         })
     }

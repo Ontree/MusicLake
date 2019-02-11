@@ -39,9 +39,16 @@ public class SPUtils {
     private static final String POSITION = "position";
     private static final String DESKTOP_LYRIC_SIZE = "desktop_lyric_size";
     private static final String DESKTOP_LYRIC_COLOR = "desktop_lyric_color";
+    private static final String DESKTOP_LYRIC_COLOR_BAR_POS = "desktop_lyric_color_bar_pos";
+    private static final String LYRIC_SIZE = "lyric_size";
+    private static final String LYRIC_COLOR = "lyric_color";
+    private static final String LYRIC_COLOR_BAR_POS = "lyric_color_bar_pos";
     public static final String QQ_OPEN_ID = "qq_open_id";
     public static final String QQ_ACCESS_TOKEN = "qq_access_token";
     public static final String QQ_EXPIRES_IN = "expires_in";
+    private static final String SHOW_FLOAT_LYRIC_BG = "show_float_lyric_bg";
+
+
 
     public static int getPlayPosition() {
         return getAnyByKey(PLAY_POSITION, -1);
@@ -110,6 +117,30 @@ public class SPUtils {
     }
 
 
+    public static int getLyricSize() {
+        return getAnyByKey(LYRIC_SIZE, 30);
+    }
+
+    public static void saveLyricSize(int size) {
+        putAnyCommit(LYRIC_SIZE, size);
+    }
+
+    public static void saveLyricColor(int color) {
+        putAnyCommit(LYRIC_COLOR, color);
+    }
+
+    public static int getLyricColor() {
+        return getAnyByKey(LYRIC_COLOR, Color.RED);
+    }
+
+    public static void saveLyricColorBarPos(int pos) {
+        putAnyCommit(LYRIC_COLOR_BAR_POS, pos);
+    }
+
+    public static int getLyricColorBarPos() {
+        return getAnyByKey(LYRIC_COLOR_BAR_POS, 0);
+    }
+
     public static int getFontSize() {
         return getAnyByKey(DESKTOP_LYRIC_SIZE, 30);
     }
@@ -119,12 +150,28 @@ public class SPUtils {
     }
 
 
-    public static void saveFontColor(int color) {
+    public static void saveFloatFontColor(int color) {
         putAnyCommit(DESKTOP_LYRIC_COLOR, color);
     }
 
-    public static int getFontColor() {
+    public static int getFloatFontColor() {
         return getAnyByKey(DESKTOP_LYRIC_COLOR, Color.RED);
+    }
+
+    public static void saveFloatFontColorBarPos(int pos) {
+        putAnyCommit(DESKTOP_LYRIC_COLOR_BAR_POS, pos);
+    }
+
+    public static int getFloatFontColorBarPos() {
+        return getAnyByKey(DESKTOP_LYRIC_COLOR_BAR_POS, 0);
+    }
+
+    public static boolean isShowFloatLyricBg() {
+        return getAnyByKey(SHOW_FLOAT_LYRIC_BG, false);
+    }
+
+    public static void saveShowFloatLyricBg(boolean enable) {
+        putAnyCommit(SHOW_FLOAT_LYRIC_BG, enable);
     }
 
     /**

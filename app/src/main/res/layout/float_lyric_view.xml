@@ -159,17 +159,37 @@
                 android:id="@+id/sb_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="300"
-                android:layout_margin="8dp" />
+                android:layout_margin="8dp"
+                android:max="300" />
 
             <com.rtugeek.android.colorseekbar.ColorSeekBar
                 android:id="@+id/sb_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="0dp"
                 app:colorSeeds="@array/material_colors" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/show_lyric_bg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/white"
+                    android:checked="false"
+                    android:text="显示背景"
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
+
 </FrameLayout>
