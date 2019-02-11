@@ -186,7 +186,7 @@ object BaiduApiServiceImpl {
      */
     fun getBaiduLyric(music: Music): Observable<String>? {
         //本地歌词路径
-        val mLyricPath = FileUtils.getLrcDir() + music.title + "-" + music.artist + ".lrc"
+        val mLyricPath = FileUtils.getLrcDir() + music.artist + " - " + music.title + ".lrc"
         //网络歌词
         val mLyricUrl = music.lyric
         return if (FileUtils.exists(mLyricPath)) {

@@ -14,7 +14,7 @@ class ArtistInfoPresenter @Inject
 constructor() : BasePresenter<ArtistInfoContract.View>(), ArtistInfoContract.Presenter {
 
     override fun loadArtistInfo(music: Music) {
-        val info = music.title + "-" + music.artist
+        val info =  music.artist + " - " + music.title
 
     }
 }

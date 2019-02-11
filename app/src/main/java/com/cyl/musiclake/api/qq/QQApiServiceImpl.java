@@ -97,7 +97,7 @@ public class QQApiServiceImpl {
     @SuppressWarnings({"unchecked", "varargs"})
     public static Observable<String> getQQLyric(Music music) {
         //本地歌词路径
-        String mLyricPath = FileUtils.getLrcDir() + music.getTitle() + "-" + music.getArtist() + ".lrc";
+        String mLyricPath = FileUtils.getLrcDir() + music.getArtist() + " - " + music.getTitle() + ".lrc";
         //网络歌词
         String mLyricUrl = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?songmid=" + music.getId() + "&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0";
         if (FileUtils.exists(mLyricPath)) {

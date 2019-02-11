@@ -35,6 +35,8 @@ public class FloatLyricViewManager {
     private boolean mIsLock;
     private Handler handler = new Handler();
     private String mSongName;
+    private String mArtist;
+    private String mSongInfo;
     private static boolean isFirstSettingLyric; //第一次设置歌词
 
     /**
@@ -81,6 +83,8 @@ public class FloatLyricViewManager {
         resetLyric(MusicApp.getAppContext().getString(R.string.lyric_loading));
         if (mPlayingMusic != null) {
             mSongName = mPlayingMusic.getTitle();
+            mArtist = mPlayingMusic.getArtist();
+            mSongInfo = mArtist + " - " + mSongName;
             Observable<String> observable = MusicApi.INSTANCE.getLyricInfo(mPlayingMusic);
             if (observable != null) {
                 ApiManager.request(observable, new RequestCallBack<String>() {
@@ -240,8 +244,8 @@ public class FloatLyricViewManager {
             handler.post(() -> {
                 if (mFloatLyricView != null) {
                     if (isFirstSettingLyric) {
-                        mFloatLyricView.getMTitle().setText(mSongName);
-                        mFloatLyricView.getMLyricText().setLyricInfo(mLyricInfo);
+                        mFloatLyricView.getMTitle().setText(mSongInfo);
+                        mFloatLyricView.getMLyricText().setLyricInfo(mLyricInfo, mSongInfo);
                         isFirstSettingLyric = false;
                     }
                     mFloatLyricView.getMLyricText().setCurrentTimeMillis(positon);

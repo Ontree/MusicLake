@@ -79,7 +79,7 @@ public class XiamiServiceImpl {
         params.put("v", "2.0"); //page
         params.put("page", "1"); //page
         params.put("limit", "1");//limit
-        params.put("key", musicInfo.getTitle() + "-" + musicInfo.getArtist());// key
+        params.put("key",  musicInfo.getArtist() + " - " + musicInfo.getTitle());// key
         params.put("r", "search/songs");
         params.put("app_key", "1");
         params.put("format", "json");
@@ -117,7 +117,7 @@ public class XiamiServiceImpl {
     @SuppressWarnings({"unchecked", "varargs"})
     public static Observable<String> getXimaiLyric(Music music) {
         //本地歌词路径
-        String mLyricPath = FileUtils.getLrcDir() + music.getTitle() + "-" + music.getArtist() + ".lrc";
+        String mLyricPath = FileUtils.getLrcDir() + music.getArtist() + " - " + music.getTitle() + ".lrc";
         //网络歌词
         String mLyricUrl = music.getLyric();
         if (FileUtils.exists(mLyricPath)) {

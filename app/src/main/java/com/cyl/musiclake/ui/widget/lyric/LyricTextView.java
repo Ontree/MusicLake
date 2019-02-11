@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -29,11 +31,16 @@ public class LyricTextView extends View {
     private int mDefaultSize = 35; //默认歌词大小
     private int lyricMaxWidth = 0; //默认歌词大小
     private float fontSize = 16;    // 设置字体大小
-    private int fontColor = Color.RED;    // 设置字体颜色
+    private int fontColor = Color.YELLOW;    // 设置字体颜色
+    private int highLightTextExtraFontSize = 15;
+    private int textExtraFontSize = -5;
+
 
     private LyricInfo mLyricInfo;
     private String mDefaultHint = "音乐湖";
     private Paint mTextPaint, mHighLightPaint;//默认画笔、已读歌词画笔
+    private Rect textRect = new Rect();
+    private Rect highLightTextRect = new Rect();
 
     /**
      * 是否有歌词
@@ -96,44 +103,50 @@ public class LyricTextView extends View {
         int screensWidth = displayMetrics.widthPixels;
 
         //设置歌词的最大宽度
-        int textMaxWidth = screensWidth / 7 * 6;
+        int textMaxWidth = screensWidth / 10 * 9;
         setTextMaxWidth(textMaxWidth);
+        Typeface font = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
 
         mTextPaint = new Paint();
         mTextPaint.setDither(true);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setTypeface(font);
         // 设定阴影(柔边, X 轴位移, Y 轴位移, 阴影颜色)
         mTextPaint.setShadowLayer(5, 3, 3, 0xb5000000);
 
         mHighLightPaint = new Paint();
         mHighLightPaint.setDither(true);
         mHighLightPaint.setAntiAlias(true);
+        mHighLightPaint.setTypeface(font);
+        // 设定阴影(柔边, X 轴位移, Y 轴位移, 阴影颜色)
+        mHighLightPaint.setShadowLayer(5, 3, 3, 0xb5000000);
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mTextPaint.setTextSize(fontSize);
-        mHighLightPaint.setTextSize(fontSize);
+        mTextPaint.setTextSize(fontSize + textExtraFontSize);
+        mHighLightPaint.setTextSize(fontSize + highLightTextExtraFontSize);
         mHighLightPaint.setColor(fontColor);
+
         if (!hasLyric) {
-            float tipTextWidth = mTextPaint.measureText(mDefaultHint);
+            float tipTextWidth = mHighLightPaint.measureText(mDefaultHint);
             Paint.FontMetrics fm = mHighLightPaint.getFontMetrics();
             int height = (int) Math.ceil(fm.descent - fm.top) + 2;
 
             canvas.drawText(mDefaultHint, (getWidth() - tipTextWidth) / 2,
-                    (getHeight() + height) / 2, mTextPaint);
-
-            canvas.clipRect((getWidth() - tipTextWidth) / 2,
-                    (getHeight() + height) / 2 - height,
-                    (float) ((getWidth() - tipTextWidth) / 2 + tipTextWidth / 2 + 5),
-                    (getHeight() + height) / 2 + height);
-
-            canvas.drawText(mDefaultHint, (getWidth() - tipTextWidth) / 2,
                     (getHeight() + height) / 2, mHighLightPaint);
+
+//            canvas.clipRect((getWidth() - tipTextWidth) / 2,
+//                    (getHeight() + height) / 2 - height,
+//                    (float) ((getWidth() - tipTextWidth) / 2 + tipTextWidth / 2 + 5),
+//                    (getHeight() + height) / 2 + height);
+//
+//            canvas.drawText(mDefaultHint, (getWidth() - tipTextWidth) / 2,
+//                    (getHeight() + height) / 2, mHighLightPaint);
 
         } else {
             LogUtil.e("tmp =  " + mCurrentPlayLine + "-" + mStartMillis + "==" + mEndMillis + "==" + content + " length = " + mLyricInfo.songLines.size());
@@ -153,58 +166,54 @@ public class LyricTextView extends View {
                 LogUtil.e("tmp =  " + mCurrentPlayLine + "-" + mStartMillis + "==" + mEndMillis + "==" + content + " length = " + content.length());
                 LogUtil.e("tmp =  " + mCurrentPlayLine + "-" + mStartMillis + "==" + mEndMillis + "==" + nextContent + " length = " + content.length());
 
-                if (mEndMillis > mStartMillis) {
-                    float tipTextWidth = mTextPaint.measureText(content);
-                    Paint.FontMetrics fm = mHighLightPaint.getFontMetrics();
-                    int height = (int) Math.ceil(fm.descent - fm.top) + 2;
-                    mShaderWidth = (float) (1.0 * (mCurrentMillis - mStartMillis) / (mEndMillis - mStartMillis)) * tipTextWidth;
-
-                    if (mCurrentPlayLine % 2 == 0) {
-                        //绘制第一行
-                        canvas.drawText(content, (getWidth() - tipTextWidth) / 2,
-                                (getHeight() + height) / 4, mTextPaint);
-
-                        //绘制第二行
-                        canvas.drawText(nextContent, (getWidth() - mTextPaint.measureText(nextContent)) / 2,
-                                (getHeight() + height) / 2, mTextPaint);
-
-                        //绘制高亮部分
-                        canvas.clipRect((getWidth() - tipTextWidth) / 2,
-                                (getHeight() + height) / 4 - height,
-                                (getWidth() - tipTextWidth) / 2 + mShaderWidth,
-                                (getHeight() + height) / 4 + height);
-
-                        canvas.drawText(lightLyric, (getWidth() - mTextPaint.measureText(lightLyric)) / 2,
-                                (getHeight() + height) / 4, mHighLightPaint);
-
-                    } else {
-                        //绘制第二行
-                        canvas.drawText(nextContent, (getWidth() - mTextPaint.measureText(nextContent)) / 2,
-                                (getHeight() + height) / 4, mTextPaint);
-
-                        //绘制第一行
-                        canvas.drawText(content, (getWidth() - tipTextWidth) / 2,
-                                (getHeight() + height) / 2, mTextPaint);
-
-                        //绘制高亮部分
-                        canvas.clipRect((getWidth() - tipTextWidth) / 2,
-                                (getHeight() + height) / 2 - height,
-                                (getWidth() - tipTextWidth) / 2 + mShaderWidth,
-                                (getHeight() + height) / 2 + height);
-
-                        canvas.drawText(lightLyric, (getWidth() - mTextPaint.measureText(lightLyric)) / 2,
-                                (getHeight() + height) / 2, mHighLightPaint);
-                    }
+//                if (mEndMillis > mStartMillis) {
+                float tipTextWidth = mTextPaint.measureText(content);
+                Paint.FontMetrics fm = mHighLightPaint.getFontMetrics();
+                int height = (int) Math.ceil(fm.descent - fm.top) + 2;
 
 
-                } else if (mCurrentPlayLine > 0) {
-                    content = mLyricInfo.getSongLines().get(mCurrentPlayLine - 1).content;
-                    float tipTextWidth = mTextPaint.measureText(content);
-                    Paint.FontMetrics fm = mHighLightPaint.getFontMetrics();
-                    int height = (int) Math.ceil(fm.descent - fm.top) + 2;
-                    canvas.drawText(content, (getWidth() - tipTextWidth) / 2,
-                            (getHeight() + height) / 2, mHighLightPaint);
-                }
+                mHighLightPaint.getTextBounds(content, 0, content.length(), highLightTextRect);
+                mTextPaint.getTextBounds(content, 0, content.length(), textRect);
+
+                //绘制第一行 高亮
+                canvas.drawText(lightLyric, (getWidth() - mHighLightPaint.measureText(lightLyric)) / 2,
+                        -highLightTextRect.top, mHighLightPaint);
+
+                //绘制第二行
+                canvas.drawText(nextContent, (getWidth() - mTextPaint.measureText(nextContent)) / 2,
+                        highLightTextRect.height()-textRect.top,
+                        mTextPaint);
+
+
+                    //mShaderWidth = (float) (1.0 * (mCurrentMillis - mStartMillis) / (mEndMillis - mStartMillis)) * tipTextWidth;
+
+//                    //绘制第一行
+//                    canvas.drawText(content, (getWidth() - tipTextWidth) / 2,
+//                            (getHeight() + height) / 4, mTextPaint);
+//
+//                    //绘制第二行
+//                    canvas.drawText(nextContent, (getWidth() - mTextPaint.measureText(nextContent)) / 2,
+//                            //(getHeight() + height) / 2,
+//                            height+2,
+//                            mTextPaint);
+
+//                    //绘制高亮部分
+//                    canvas.clipRect((getWidth() - tipTextWidth) / 2,
+//                            (getHeight() + height) / 4 - height,
+//                            (getWidth() - tipTextWidth) / 2 + tipTextWidth,
+//                            (getHeight() + height) / 4 + height);
+//
+//                    canvas.drawText(lightLyric, (getWidth() - mTextPaint.measureText(lightLyric)) / 2,
+//                            (getHeight() + height) / 4, mHighLightPaint);
+
+//                } else if (mCurrentPlayLine > 0) {
+//                    content = mLyricInfo.getSongLines().get(mCurrentPlayLine - 1).content;
+//                    float tipTextWidth = mTextPaint.measureText(content);
+//                    Paint.FontMetrics fm = mHighLightPaint.getFontMetrics();
+//                    int height = (int) Math.ceil(fm.descent - fm.top) + 2;
+//                    canvas.drawText(content, (getWidth() - tipTextWidth) / 2,
+//                            (getHeight() + height) / 2, mHighLightPaint);
+//                }
             }
         }
     }
@@ -241,7 +250,7 @@ public class LyricTextView extends View {
      *
      * @param lyricInfo 歌词文件
      */
-    public void setLyricInfo(LyricInfo lyricInfo) {
+    public void setLyricInfo(LyricInfo lyricInfo, String mSongInfo) {
         if (lyricInfo != null) {
             mLyricInfo = lyricInfo;
             hasLyric = true;
@@ -249,7 +258,7 @@ public class LyricTextView extends View {
             LogUtil.e(TAG, mLineCount + "===" + mLyricInfo.songLines.toString());
         } else {
             hasLyric = false;
-            mDefaultHint = "音乐湖，暂无歌词";
+            mDefaultHint = mSongInfo;
         }
         invalidateView();
     }

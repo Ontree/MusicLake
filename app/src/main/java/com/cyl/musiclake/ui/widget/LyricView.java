@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,11 +23,14 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
@@ -73,7 +77,7 @@ public class LyricView extends View {
 
     private static final int DEFAULT_TEXT_SIZE = 16;//sp
     private static final int DEFAULT_MAX_LENGTH = 300;//dp
-    private static final int DEFAULT_LINE_SPACE = 25;//dp
+    private static final int DEFAULT_LINE_SPACE = 5;//dp
 
     private int mHintColor;
     private int mDefaultColor;
@@ -307,7 +311,13 @@ public class LyricView extends View {
         mHighLightColor = ta.getColor(R.styleable.LyricView_highlightColor, Color.parseColor("#FFFFFF"));
         mTextSize = ta.getDimensionPixelSize(R.styleable.LyricView_textSize, (int) getRawSize(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE));
         mTextAlign = ta.getInt(R.styleable.LyricView_textAlign, CENTER);
-        mMaxLength = ta.getDimensionPixelSize(R.styleable.LyricView_maxLength, (int) getRawSize(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_MAX_LENGTH));
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
+
+        mMaxLength = ta.getDimensionPixelSize(R.styleable.LyricView_maxLength, displayMetrics.widthPixels*9/10);
         mLineSpace = ta.getDimensionPixelSize(R.styleable.LyricView_lineSpace, (int) getRawSize(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_LINE_SPACE));
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_location);
 //
@@ -364,10 +374,11 @@ public class LyricView extends View {
                 for (int i = 0; i < mLyricInfo.songLines.size(); i++) {
 
                     StaticLayout staticLayout = new StaticLayout(mLyricInfo.songLines.get(i).content, mTextPaint,
-                            (int) getRawSize(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_MAX_LENGTH),
+                            mMaxLength,
                             Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
                     if (staticLayout.getLineCount() > 1) {
+                        LogUtil.e("Multi line: ", mLyricInfo.songLines.get(i).content);
                         mEnableLineFeed = true;
                         mExtraHeight = mExtraHeight + (staticLayout.getLineCount() - 1) * mTextHeight;
                     }
@@ -614,6 +625,10 @@ public class LyricView extends View {
         mTextPaint = new TextPaint();
         mTextPaint.setDither(true);
         mTextPaint.setAntiAlias(true);
+        Typeface font = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
+        mTextPaint.setTypeface(font);
+        mTextPaint.setShadowLayer(5, 3, 3, 0xb5000000);
+
         switch (mTextAlign) {
             case LEFT:
                 mTextPaint.setTextAlign(Paint.Align.LEFT);

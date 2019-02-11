@@ -287,12 +287,13 @@ class PlayerActivity : BaseActivity<PlayPresenter>(), PlayContract.View {
         coverView?.findViewById<TextView>(R.id.tv_sound_effect)?.setOnClickListener {
             NavigationHelper.navigateToSoundEffect(this)
         }
-        coverView?.let {
-            viewPagerContent.add(it)
-        }
         lyricView?.let {
             viewPagerContent.add(it)
         }
+        coverView?.let {
+            viewPagerContent.add(it)
+        }
+
         mQualityTv?.setOnClickListener {
             QualitySelectDialog.newInstance(playingMusic).apply {
                 changeSuccessListener = {
@@ -312,13 +313,15 @@ class PlayerActivity : BaseActivity<PlayPresenter>(), PlayContract.View {
 
             override fun onPageSelected(position: Int) {
                 LogUtil.d("PlayControlFragment", "--$position")
-                if (position == 0) {
+                if (position == 1) {
                     searchLyricIv.visibility = View.GONE
                     operateSongIv.visibility = View.VISIBLE
+                    extraIvs.visibility = View.VISIBLE
                     mLyricView?.setIndicatorShow(false)
                 } else {
                     searchLyricIv.visibility = View.VISIBLE
                     operateSongIv.visibility = View.GONE
+                    extraIvs.visibility = View.GONE
                 }
             }
 

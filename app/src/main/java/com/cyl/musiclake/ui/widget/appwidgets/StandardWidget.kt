@@ -77,7 +77,7 @@ class StandardWidget : BaseWidget() {
         }
         if (MusicPlayerService.getInstance() != null) {
             val music = MusicPlayerService.getInstance().playingMusic ?: return
-            remoteViews.setTextViewText(R.id.tv_title, music.title + " - " + music.artist)
+            remoteViews.setTextViewText(R.id.tv_title, music.artist + " - " + music.title)
             CoverLoader.loadImageViewByMusic(context, music) { artwork ->
                 if (artwork != null) {
                     remoteViews.setImageViewBitmap(R.id.iv_cover, artwork)

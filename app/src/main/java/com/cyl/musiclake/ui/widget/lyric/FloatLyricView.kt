@@ -230,18 +230,22 @@ class FloatLyricView(context: Context) : FrameLayout(context), View.OnClickListe
      */
     private fun toggleLyricView() {
         if (mRootView != null) {
-            if (mRelLyricView.visibility == View.INVISIBLE) {
-                mRelLyricView.visibility = View.VISIBLE
+            if (mLinLyricView.visibility != View.VISIBLE) {
                 mLinLyricView.visibility = View.VISIBLE
+                mMusicButton.visibility = View.VISIBLE
+                mCloseButton.visibility = View.VISIBLE
                 mFrameBackground.visibility = View.VISIBLE
+                mTitle.visibility = View.VISIBLE
             } else {
                 if (!isHiddenSettings) {
                     isHiddenSettings = true
                     updateSettingStatus(isHiddenSettings)
                 }
-                mLinLyricView.visibility = View.INVISIBLE
-                mRelLyricView.visibility = View.INVISIBLE
-                mFrameBackground.visibility = View.INVISIBLE
+                mLinLyricView.visibility = View.GONE
+                mMusicButton.visibility = View.GONE
+                mCloseButton.visibility = View.GONE
+                mFrameBackground.visibility = View.GONE
+                mTitle.visibility = View.GONE
             }
         }
     }

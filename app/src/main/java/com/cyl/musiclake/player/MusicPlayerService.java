@@ -188,7 +188,7 @@ public class MusicPlayerService extends Service {
     //主线程Handler
     private Handler mMainHandler;
 
-    private boolean showLyric;
+    private boolean showLyric = true;
 
     private static MusicPlayerService instance;
 
@@ -419,6 +419,7 @@ public class MusicPlayerService extends Service {
         mPlayer = new MusicPlayerEngine(this);
         mPlayer.setHandler(mHandler);
         reloadPlayQueue();
+        checkFloatLyric();
     }
 
     /**
@@ -505,7 +506,9 @@ public class MusicPlayerService extends Service {
             mPlayingPos = PlayQueueManager.INSTANCE.getPreviousPosition(mPlayQueue.size(), mPlayingPos);
             LogUtil.e(TAG, "prev: " + mPlayingPos);
             stop(false);
-            playCurrentAndNext();
+            if (mPlayingPos>0 ) {
+                playCurrentAndNext();
+            }
         }
     }
 
@@ -1171,6 +1174,7 @@ public class MusicPlayerService extends Service {
     private Timer lyricTimer;
 
     public void showDesktopLyric(boolean show) {
+        showLyric = show;
         if (show) {
             // 开启定时器，每隔0.5秒刷新一次
             if (lyricTimer == null) {
@@ -1221,7 +1225,7 @@ public class MusicPlayerService extends Service {
             }
             mNotificationBuilder.setContentTitle(getTitle());
             mNotificationBuilder.setContentText(getArtistName());
-            mNotificationBuilder.setTicker(getTitle() + "-" + getArtistName());
+            mNotificationBuilder.setTicker(getArtistName() + " - " + getTitle());
             updateNotificationStatus();
         } else {
             updateNotificationStatus();
@@ -1304,6 +1308,14 @@ public class MusicPlayerService extends Service {
             stopSelf();
             releaseServiceUiAndStop();
             System.exit(0);
+        }
+    }
+
+    private void checkFloatLyric() {
+        if (SystemUtils.isOpenFloatWindow()) {
+            showDesktopLyric(showLyric);
+        } else {
+            SystemUtils.applySystemWindow();
         }
     }
 

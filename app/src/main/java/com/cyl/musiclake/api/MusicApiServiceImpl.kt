@@ -458,7 +458,7 @@ object MusicApiServiceImpl {
      * 获取本地歌词
      */
     fun getLocalLyricInfo(music: Music): Observable<String> {
-        val mLyricPath = FileUtils.getLrcDir() + music.title + "-" + music.artist + ".lrc"
+        val mLyricPath = FileUtils.getLrcDir() + music.artist + " - " + music.title + ".lrc"
         //网络歌词
         return MusicApi.getLocalLyricInfo(mLyricPath)
     }
@@ -468,9 +468,9 @@ object MusicApiServiceImpl {
      * 保存歌词
      */
     fun saveLyricInfo(name: String, artist: String, lyricInfo: String) {
-        val mLyricPath = FileUtils.getLrcDir() + "$name-$artist.lrc"
+        val mLyricPath = FileUtils.getLrcDir() + "$artist - $name.lrc"
         val save = FileUtils.writeText(mLyricPath, lyricInfo)
-        LogUtil.e("保存网络歌词：$save")
+        LogUtil.e("保存网络歌词 to $mLyricPath：$save")
     }
 
 }
